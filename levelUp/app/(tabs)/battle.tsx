@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, Text, StyleSheet } from "react-native";
 
-export default function HomeScreen() {
+export default function BattleScreen() {
   
   return (
-      <Text style={styles.predictionText}>Home Page</Text>
+      <Text style={styles.predictionText}>Battle Page</Text>
   );
 }
 
