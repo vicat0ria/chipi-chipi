@@ -88,13 +88,6 @@ def predict():
         return jsonify({"error": f"Error processing the image: {str(e)}"}), 500
 
 
-# MongoDB connection string
-MONGO_URI = "mongodb+srv://albertosandoval950:y6fmhzmwJMY0kZV9@users.a7kxh.mongodb.net/?retryWrites=true&w=majority&appName=Users"
-client = MongoClient(MONGO_URI)
-db = client["LevelUp"]
-collection = db["users"]
-
-
 # Helper function to convert ObjectId to string
 def serialize_user(user):
     user['_id'] = str(user['_id'])  # Convert _id to string (for JSON serialization)
@@ -210,7 +203,7 @@ def get_leaderboard():
 
     print(leaderboard)
 
-    return "True"
+    return jsonify(leaderboard)
 
 @app.route("/get_level", methods=["GET"])
 @jwt_required()  # Ensure parentheses are used here
