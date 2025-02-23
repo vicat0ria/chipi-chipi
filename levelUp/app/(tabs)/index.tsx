@@ -1,10 +1,42 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Button } from 'react-native';
-import { router } from 'expo-router';
-import { useNavigation } from '@react-navigation/native'; // Import the navigation hook
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Audio } from 'expo-av';
 
 const HomeScreen: React.FC = () => {
+  const sound = useRef<Audio.Sound | null>(null);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    // Load and play the music when the component mounts
+    const loadMusic = async () => {
+      try {
+        sound.current = new Audio.Sound();
+        await sound.current.loadAsync(require('../../assets/sounds/armprojhack.mp3'));
+        await sound.current.setIsLoopingAsync(true); // Enable looping
+        await sound.current.playAsync();
+      } catch (error) {
+        console.error('Error loading music', error);
+      }
+    };
+
+    loadMusic();
+
+    // Cleanup: Stop and unload the sound when the component unmounts
+    return () => {
+      if (sound.current) {
+        sound.current.unloadAsync();
+      }
+    };
+  }, []);
+
+  const handlePlayPress = async () => {
+    if (sound.current) {
+      await sound.current.stopAsync(); // Stop the music
+      await sound.current.unloadAsync(); // Unload the music
+    }
+    navigation.navigate('play'); // Navigate to the next screen
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -13,12 +45,12 @@ const HomeScreen: React.FC = () => {
         <View style={styles.line} />
         <Text style={styles.subtitle}>American Sign Language</Text>
         <Text style={styles.subtitle}>Level 1</Text>
-    <TouchableOpacity 
-      style={styles.button} 
-      onPress={() => navigation.navigate('play')}
-    >
-      <Text style={styles.buttonText}>Learn</Text>
-    </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={handlePlayPress} // Stop music before navigating
+        >
+          <Text style={styles.buttonText}>Learn</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -53,7 +85,7 @@ const styles = StyleSheet.create({
     color: '#555',
     textAlign: 'center',
     marginBottom: 10,
-    fontWeight:'bold',
+    fontWeight: 'bold',
   },
   button: {
     backgroundColor: '#3DA35D',
@@ -71,4 +103,3 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
-
