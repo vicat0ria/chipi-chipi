@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request, jsonify
-from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
+import pickle
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 from pymongo import MongoClient
 import bcrypt
 from flask_cors import CORS
@@ -21,11 +22,29 @@ def verify_password(input_password, hashed_password):
 app = Flask(__name__)
 CORS(app)  # Enable CORS to allow requests from different origins
 
+# MongoDB connection string
+MONGO_URI = "mongodb+srv://albertosandoval950:y6fmhzmwJMY0kZV9@users.a7kxh.mongodb.net/?retryWrites=true&w=majority&appName=Users"
+client = MongoClient(MONGO_URI)
+db = client["LevelUp"]
+collection = db["users"]
+
+# Initialize JWTManager with the Flask app
+jwt = JWTManager(app)
+# Generated with os.urandom(24).hex()
+app.config['JWT_SECRET_KEY'] = 'c52aaf94e3221359641f0f0b82b80d0f214945ffa85264e0'
+
+
 # Load trained model
 #with open("model.pkl", "rb") as f:
    # model, vectorizer = pickle.load(f)
 # Load your trained model (make sure your model is saved as 'model.h5' or update accordingly)
-model = tf.keras.models.load_model('trained_model.h5')
+
+#Mac specific trained model
+#model = tf.keras.models.load_model(r'trained_model.h5')
+
+import h5py
+with h5py.File('trained_model.h5', 'r') as f:
+    print(f.keys())
 
 def preprocess_image(image):
     """
@@ -74,11 +93,13 @@ def predict():
     except Exception as e:
         return jsonify({"error": f"Error processing the image: {str(e)}"}), 500
 
+
 # MongoDB connection string
 MONGO_URI = "mongodb+srv://albertosandoval950:y6fmhzmwJMY0kZV9@users.a7kxh.mongodb.net/?retryWrites=true&w=majority&appName=Users"
 client = MongoClient(MONGO_URI)
 db = client["LevelUp"]
 collection = db["users"]
+
 
 # Helper function to convert ObjectId to string
 def serialize_user(user):
@@ -87,44 +108,46 @@ def serialize_user(user):
 
 @app.route('/create_user', methods=['POST'])
 def create_user():
+
     data = request.get_json()
 
     username = data.get("username")
     password = data.get("password")
-    experience_points = 0
-    level = 0
-    power = 1
-    health = 10
-    dexterity = 0
 
     if not username or not password:
-        return jsonify({"error":"Missing required fields"}), 400
-
+        return jsonify({"error": "Missing required fields"}), 400
 
     if collection.find_one({"username": username}) is not None:
-        return jsonify({"error":"Username already taken"}), 400
+        return jsonify({"error": "Username already taken"}), 400
 
     hashed_password = hash_password(password)
     user = {
-        "username":username,
-        "password":hashed_password.decode("utf-8"),
-        "level": level,
-        "power": power,
-        "health": health,
-        "experience": experience_points,
-        "dexterity": dexterity
+        "username": username,
+        "password": hashed_password.decode("utf-8"),
+        "level": 0,
+        "streak":0,
+        "power": 0,
+        "health": 0,
+        "experience": 0,
+        "dexterity": 0
     }
     collection.insert_one(user)
 
-    return jsonify({"message":"User registered successfully"}), 201
+    # Create a JWT token upon successful registration
+    access_token = create_access_token(identity=username)
 
-@app.route('/login', methods=['GET'])
+    return jsonify({"message": "User registered successfully", "token": access_token}), 201
+
+@app.route('/login', methods=['POST'])
 def get_user():
     # Get the username from the request arguments
     data = request.get_json()
 
     username = data.get("username")
     inputted_password = data.get("password")
+
+    print(username)
+    print(inputted_password)
 
     user = collection.find_one({"username": username})
 
@@ -135,40 +158,102 @@ def get_user():
 
     correct_password = user["password"].encode("utf-8")
 
-    if user and verify_password(inputted_password,correct_password):
-        # If user is found, return the user object (with _id serialized)
-        return jsonify(serialize_user(user)), 200
+    if user and verify_password(inputted_password, correct_password):
+        access_token = create_access_token(identity=username)
+        return jsonify({"token": access_token}), 200
     else:
-        # If user is not found, return a 404 response
-        return jsonify({"error": "User not found"}), 404
+        return jsonify({"error": "Invalid password"}), 401
+
 
 @app.route("/save_boss", methods=["POST"])
 @jwt_required()
 def save_boss():
-    user_id = get_jwt_identity()
-    users = mongo.db.users
-    bosses = mongo.db.bosses
-    boss_name = request.get_json().get("Name")
+    users = db["users"]
+    bosses = db["bosses"]
+    data = request.get_json()
+    boss_name = data.get("Name")
 
-    # Find user and item
-    user = users.find_one({"_id": ObjectId(user_id)})
-    boss = bosses.find_one({"Name": ObjectId(boss_name)})
-    boss_id = boss.get("_id")
+    # Get username from JWT token
+    username = get_jwt_identity()
+
+    # Find user and boss
+    user = users.find_one({"username": username})
+    boss = bosses.find_one({"Name": boss_name})  # No need to convert boss_name to ObjectId
 
     if not user:
         return jsonify({"message": "User not found"}), 404
 
     if not boss:
-        return jsonify({"message": "Item not found"}), 404
+        return jsonify({"message": "Boss not found"}), 404  # Changed the message here
+
+    boss_id = boss.get("_id")
 
     # Avoid duplicates
     if str(boss_id) in user.get("defeated_bosses", []):
-        return jsonify({"message": "Item already saved"}), 400
+        return jsonify({"message": "Boss already saved"}), 400  # Changed the message here
 
-    # Save item
-    users.update_one({"_id": ObjectId(user_id)}, {"$push": {"defeated_bosses": str(boss["_id"])}})
+    # Save boss to user's defeated_bosses list
+    users.update_one({"username": username}, {"$push": {"defeated_bosses": boss}})
 
-    return jsonify({"message": "Item saved successfully"})
+    return jsonify({"message": "Boss saved successfully"})
+
+
+@app.route("/leaderboard",methods=["GET"])
+def get_leaderboard():
+    users = db["users"].find()
+    player_levels = []
+
+    for user in users:
+        player_levels.append(user.get("level"))
+
+    top_3_levels = sorted(player_levels, reverse=True)[:3]
+
+    leaderboard = []
+
+    for value in top_3_levels:
+        current_user = db["users"].find_one({"level":value}).get("username")
+        leaderboard.append([current_user,value])
+
+    print(leaderboard)
+
+    return "True"
+
+@app.route("/get_level", methods=["GET"])
+@jwt_required()  # Ensure parentheses are used here
+def get_level():
+    users = db["users"]
+    username = get_jwt_identity()
+
+    user = users.find_one({"username": username})
+
+    if user:  # First, check if user exists
+        user_level = user.get("level")  # Now, safely access the 'level'
+        print(user_level)
+        return jsonify({"level": user_level}), 200  # Return user level in JSON format
+    else:
+        return jsonify({"error": "User not found"}), 404  # If no user is found
+
+@app.route("/update_level",methods=["POST"])
+@jwt_required()
+def update_level():
+    data = request.get_json()
+    print(data)
+    level = data.get("level")
+
+    users = db["users"]
+    username = get_jwt_identity()
+
+    user = users.find_one({"username":username})
+
+    print(level)
+
+    if user:
+        users.update_one({"username":username},{"$set":{"level":level}})
+        return jsonify({"level": level}), 200  # Return user level in JSON format
+    else:
+        return jsonify({"error": "User not found"}), 404  # If no user is found
+
+
 
 if __name__ == "__main__":
     app.run(host="10.40.106.51", port=5000, debug=True)
