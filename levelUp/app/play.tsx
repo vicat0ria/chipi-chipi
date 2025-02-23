@@ -1,9 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import the navigation hook
+import React, { useState } from 'react';
+import { 
+  View, Text, StyleSheet, SafeAreaView, Image, ScrollView, TouchableOpacity, Animated 
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Audio } from 'expo-av';
 
 const PlayScreen: React.FC = () => {
-  const navigation = useNavigation(); // Get the navigation object
+  const navigation = useNavigation();
+  const [progress, setProgress] = useState(0);
 
   const lessons = [
     { letter: 'A', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Sign_language_A.svg/646px-Sign_language_A.svg.png' },
@@ -12,26 +16,27 @@ const PlayScreen: React.FC = () => {
     { letter: 'D', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Sign_language_D.svg/484px-Sign_language_D.svg.png' }
   ];
 
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.lessonTitle}>Lesson 1</Text>
+        
         {lessons.map((lesson, index) => (
-          <View key={index} style={styles.lessonContainer}>
+          <TouchableOpacity key={index} style={styles.lessonContainer}>
             <Text style={styles.subtitle}>Letter {lesson.letter}</Text>
             <Image 
               source={{ uri: lesson.imageUrl }}
               style={styles.image}
               resizeMode="contain"
             />
-          </View>
+          </TouchableOpacity>
         ))}
 
         <TouchableOpacity 
           style={styles.btn} 
-          onPress={() => navigation.navigate('temp')}
-        >
-          <Text style={styles.btnText}>Quiz</Text>
+          onPress={() => navigation.navigate('QuizScreen')}>
+          <Text style={styles.btnText}>Take the Quiz!</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -41,9 +46,7 @@ const PlayScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#fff',
     paddingHorizontal: 20,
   },
   lessonTitle: {
@@ -56,15 +59,18 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     alignItems: 'center',
-    paddingBottom: 20, // Adds padding at the bottom for the button
+    paddingBottom: 20,
   },
   lessonContainer: {
     marginBottom: 40,
     alignItems: 'center',
+    backgroundColor: '#FFF3E0',
+    padding: 15,
+    borderRadius: 15,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 150,
+    height: 150,
   },
   subtitle: {
     fontSize: 24,
@@ -78,15 +84,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 30,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderWidth: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 25,
     backgroundColor: '#3DA35D',
-    borderColor: '#3DA35D',
   },
   btnText: {
-    fontSize: 18,
-    lineHeight: 26,
+    fontSize: 20,
     fontWeight: '600',
     color: '#fff',
   },
