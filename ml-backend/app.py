@@ -17,6 +17,9 @@ with open("model.pkl", "rb") as f:
 def home():
     return "Flask is running!"
 
+@app.route("/temp", methods=["POST"])
+def test():
+    return "success"
 
 @app.route("/predict", methods=["POST"])
 def predict():
