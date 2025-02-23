@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import pickle
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from pymongo import MongoClient
 import bcrypt
 
