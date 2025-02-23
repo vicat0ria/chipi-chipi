@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native'; // Import the navigati
 import logo from '../assets/images/LU-Logo.png';
 import { TouchableOpacity } from 'react-native';
 import axios from "axios";
+import character from '../assets/images/character.png';
 
 type CreateUserResponse = {
   message: string;
@@ -22,7 +23,7 @@ export default function CreateUserScreen() {
     try {
       // Send the username and password to your Flask API
       const result = await axios.post<CreateUserResponse>(
-        "http://10.40.144.249:5000/create_user",
+        "http://10.40.125.220:5000/create_user",
         { username, password }
       );
       
@@ -76,12 +77,25 @@ export default function CreateUserScreen() {
           </TouchableOpacity>
         </View>
         <Text style={styles.responseText}>Already have an account?</Text>
+        <Image
+            alt="Character"
+            resizeMode="contain"
+            style={styles.character}
+            source={character}
+          />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  character: {
+    width: 200,
+    height: 200,
+    alignSelf: 'center', 
+    marginTop: 20,
+    marginLeft: 60,
+  },
   container: {
     flexGrow: 1,
     flexShrink: 1,

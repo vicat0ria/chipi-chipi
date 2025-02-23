@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, TextInput, Button, Text, StyleSheet, Image} from "react-native";
 import { useNavigation } from '@react-navigation/native'; // Import the navigation hook
 import logo from '../assets/images/LU-Logo.png';
+import character from '../assets/images/character.png';
 import { TouchableOpacity } from 'react-native';
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -23,7 +24,7 @@ export default function CreateUserScreen() {
     try {
       // Send the username and password to your Flask API
       const result = await axios.post<CreateUserResponse>(
-        "http://10.40.144.249:5000/login",
+        "http://10.40.125.220:5000/login",
         { username, password }
       );
       
@@ -72,22 +73,34 @@ export default function CreateUserScreen() {
         />
 
       <View style={styles.formAction}>
-          <Text style={styles.responseText}>{response}</Text>
           
           <TouchableOpacity style={styles.btn} onPress={handleSubmit}>
             <Text style={styles.btnText}>Log In</Text>
           </TouchableOpacity>
         </View>
         <Text style={styles.responseText}>Don't have an account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('signup')}>
+        <TouchableOpacity onPress={() => navigation.navigate('tasks')}>
         <Text style={[styles.responseText, { color: 'blue' }]}>Sign Up</Text>
         </TouchableOpacity>
+                <Image
+                    alt="Character"
+                    resizeMode="contain"
+                    style={styles.character}
+                    source={character}
+                  />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  character: {
+    width: 200,
+    height: 200,
+    alignSelf: 'center', 
+    marginTop: 20,
+    marginLeft: 60,
+  },
   container: {
     flexGrow: 1,
     flexShrink: 1,
