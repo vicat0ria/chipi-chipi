@@ -15,6 +15,18 @@ def verify_password(input_password, hashed_password):
 
 app = Flask(__name__)
 
+# MongoDB connection string
+MONGO_URI = "mongodb+srv://albertosandoval950:y6fmhzmwJMY0kZV9@users.a7kxh.mongodb.net/?retryWrites=true&w=majority&appName=Users"
+client = MongoClient(MONGO_URI)
+db = client["LevelUp"]
+collection = db["users"]
+
+# Initialize JWTManager with the Flask app
+jwt = JWTManager(app)
+# Generated with os.urandom(24).hex()
+app.config['JWT_SECRET_KEY'] = 'c52aaf94e3221359641f0f0b82b80d0f214945ffa85264e0'
+
+
 # Load trained model
 with open("model.pkl", "rb") as f:
     model, vectorizer = pickle.load(f)
@@ -33,13 +45,6 @@ def predict():
     prediction = model.predict(text_vectorized)[0]
     
     return jsonify({"prediction": int(prediction)})
-
-
-# MongoDB connection string
-MONGO_URI = "mongodb+srv://albertosandoval950:y6fmhzmwJMY0kZV9@users.a7kxh.mongodb.net/?retryWrites=true&w=majority&appName=Users"
-client = MongoClient(MONGO_URI)
-db = client["LevelUp"]
-collection = db["users"]
 
 
 # Helper function to convert ObjectId to string
@@ -83,32 +88,29 @@ def create_user():
 
 
 
-@app.route('/login', methods=['GET'])
+@app.route('/login', methods=['POST'])
 def get_user():
-    # Get the username from the request arguments
-    data = request.get_json();
+    data = request.get_json()  # Get the JSON body
 
     username = data.get("username")
     inputted_password = data.get("password")
+
+    print(username)
+    print(inputted_password)
 
     user = collection.find_one({"username": username})
 
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    # Query the database for the user with the inputted username
-
-    print(user)
-
     correct_password = user["password"].encode("utf-8")
 
-    if user and verify_password(inputted_password,correct_password):
-        # If user is found, return the user object (with _id serialized)
-        access_token = create_access_token(identity=username)  # Generate JWT token
+    if user and verify_password(inputted_password, correct_password):
+        access_token = create_access_token(identity=username)
         return jsonify({"token": access_token}), 200
     else:
-        # If user is not found, return a 404 response
-        return jsonify({"error": "User not found"}), 404
+        return jsonify({"error": "Invalid password"}), 401
+
 
 
 @app.route("/save_boss", methods=["POST"])
@@ -142,6 +144,25 @@ def save_boss():
 
     return jsonify({"message": "Boss saved successfully"})
 
+@app.route("/leaderboard",methods=["GET"])
+def get_leaderboard():
+    users = db["users"].find()
+    player_levels = []
+
+    for user in users:
+        player_levels.append(user.get("level"))
+
+    top_3_levels = sorted(player_levels, reverse=True)[:3]
+
+    leaderboard = []
+
+    for value in top_3_levels:
+        current_user = db["users"].find_one({"level":value}).get("username")
+        leaderboard.append([current_user,value])
+
+    print(leaderboard)
+
+    return "True"
 
 
 if __name__ == "__main__":

@@ -14,13 +14,11 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     try {
-      // Send the username and password to your Flask API for authentication
       const result = await axios.post<LoginResponse>(
-        "http://10.40.144.249:5000/login",
-        { username, password }
+        "http://10.40.144.249:5000/login", 
+        { username, password } // Send the body as JSON
       );
       
-      // Display response message from API
       if (result.data.error) {
         setResponse(result.data.error);
       } else {
@@ -31,6 +29,8 @@ export default function LoginScreen() {
       setResponse("Error fetching response");
     }
   };
+  
+  
 
   return (
     <View style={styles.container}>
