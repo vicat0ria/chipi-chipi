@@ -54,38 +54,34 @@ def serialize_user(user):
 
 @app.route('/create_user', methods=['POST'])
 def create_user():
-    data = request.get_json();
+    
+    data = request.get_json()
 
     username = data.get("username")
     password = data.get("password")
-    experience_points = 0
-    level = 0
-    power = 0
-    health = 0
-    dexterity = 0
-
 
     if not username or not password:
-        return jsonify({"error":"Missing required fields"}), 400
-
+        return jsonify({"error": "Missing required fields"}), 400
 
     if collection.find_one({"username": username}) is not None:
-        return jsonify({"error":"Username already taken"}), 400
+        return jsonify({"error": "Username already taken"}), 400
 
     hashed_password = hash_password(password)
     user = {
-        "username":username,
-        "password":hashed_password.decode("utf-8"),
-        "level": level,
-        "power": power,
-        "health": health,
-        "experience": experience_points,
-        "dexterity": dexterity
+        "username": username,
+        "password": hashed_password.decode("utf-8"),
+        "level": 0,
+        "power": 0,
+        "health": 0,
+        "experience": 0,
+        "dexterity": 0
     }
     collection.insert_one(user)
 
-    return jsonify({"message":"User registered successfully"}), 201
+    # Create a JWT token upon successful registration
+    access_token = create_access_token(identity=username)
 
+    return jsonify({"message": "User registered successfully", "token": access_token}), 201
 
 
 @app.route('/login', methods=['POST'])
@@ -114,14 +110,15 @@ def get_user():
 
 
 @app.route("/save_boss", methods=["POST"])
-#@jwt_required()
+@jwt_required()
 def save_boss():
     users = db["users"]
     bosses = db["bosses"]
     data = request.get_json()
     boss_name = data.get("Name")
-    username = data.get("username")
 
+    # Get username from JWT token
+    username = get_jwt_identity()
 
     # Find user and boss
     user = users.find_one({"username": username})

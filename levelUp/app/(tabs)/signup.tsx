@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, Text, StyleSheet } from "react-native";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type CreateUserResponse = {
   message: string;
   error?: string;
+  token?: string; // Include token in the expected response type
 };
 
 export default function CreateUserScreen() {
@@ -19,12 +21,18 @@ export default function CreateUserScreen() {
         "http://10.40.144.249:5000/create_user",
         { username, password }
       );
-      
+
       // Display response message from API
       if (result.data.error) {
         setResponse(result.data.error);
       } else {
         setResponse(result.data.message);
+
+        // If a token is received, store it securely
+        if (result.data.token) {
+          await AsyncStorage.setItem("jwt_token", result.data.token);
+          console.log("JWT Token saved:", result.data.token);
+        }
       }
     } catch (error) {
       console.error("Error:", error);
