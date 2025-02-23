@@ -1,52 +1,74 @@
-// // index.tsx
-// import React from "react";
-// import { View, Text, Button, StyleSheet } from "react-native";
-// import { useNavigation } from '@react-navigation/native';
-
-// const HomeScreen = () => {
-//   const navigation = useNavigation();
-//   return (
-//     <View>
-//       <Text style={styles.predictionText}>Home Screen</Text>
-//       <Button
-//         title="Play"
-//         onPress={() => navigation.navigate('Battle')} // Navigate to TempScreen
-//       />
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   predictionText: {
-//     marginTop: 100,
-//     fontSize: 18,
-//     color: "white",
-//   },
-// });
-
-// export default HomeScreen;
-
-import React from 'react';
-import { View, Button, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Button } from 'react-native';
+import { router } from 'expo-router';
 import { useNavigation } from '@react-navigation/native'; // Import the navigation hook
 
-const YourComponent = () => {
-  const navigation = useNavigation(); // Get the navigation object
+const HomeScreen: React.FC = () => {
+  const navigation = useNavigation();
 
   return (
-    <View style={styles.container}>
-      <Button
-        title="Go to Home"
-        onPress={() => navigation.navigate('temp')} // Navigate to "explore"
-      />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        <Text style={styles.expTitle}>EXP: 1765</Text>
+        <View style={styles.line} />
+        <Text style={styles.subtitle}>American Sign Language</Text>
+        <Text style={styles.subtitle}>Level 1</Text>
+    <TouchableOpacity 
+      style={styles.button} 
+      onPress={() => navigation.navigate('play')}
+    >
+      <Text style={styles.buttonText}>Play</Text>
+    </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 100, // Apply margin
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    paddingHorizontal: 20,
+  },
+  content: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 50,
+  },
+  expTitle: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#3DA35D',
+    textAlign: 'center',
+  },
+  line: {
+    width: '80%',
+    height: 2,
+    backgroundColor: '#3DA35D',
+    marginVertical: 30,
+  },
+  subtitle: {
+    fontSize: 24,
+    color: '#555',
+    textAlign: 'center',
+    marginBottom: 10,
+    fontWeight:'bold',
+  },
+  button: {
+    backgroundColor: '#3DA35D',
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    borderRadius: 5,
+    marginVertical: 30,
+  },
+  buttonText: {
+    fontSize: 30,
+    color: '#FFF',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
-export default YourComponent;
+export default HomeScreen;
+

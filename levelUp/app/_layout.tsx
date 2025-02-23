@@ -35,7 +35,7 @@ export default function RootLayout() {
         {/* Main Tab Navigation */}
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         {/* Handle "not found" route */}
-        <Stack.Screen name="temp" options={{ title: 'Temp Screen', headerShown: false }} />
+        <Stack.Screen name="temp" options={{ title: 'Temp Screen', headerShown: true}} />
         <Stack.Screen name="play" options={{ title: 'Play Screen', headerShown: true }} />
 
         <Stack.Screen name="+not-found" />
