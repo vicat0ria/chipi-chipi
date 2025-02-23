@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native'; // Import the navigati
 import logo from '../assets/images/LU-Logo.png';
 import { TouchableOpacity } from 'react-native';
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import character from '../assets/images/character.png';
 
 type CreateUserResponse = {
@@ -32,6 +33,7 @@ export default function CreateUserScreen() {
         setResponse(result.data.error);
       } else {
         setResponse(result.data.message);
+        await AsyncStorage.setItem('authToken', result.data.token);  // Save token
         navigation.navigate('tasks');
       }
     } catch (error) {

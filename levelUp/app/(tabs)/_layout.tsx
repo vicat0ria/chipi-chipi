@@ -48,9 +48,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="collection"
         options={{
-          title: 'Settings',
+          title: 'Collection',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />
@@ -67,7 +67,6 @@ export default function TabLayout() {
           title: 'ML',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
-<<<<<<< HEAD
       />
       <Tabs.Screen
         name="test"
@@ -76,9 +75,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />
-=======
       /> */}
->>>>>>> main
     </Tabs>
     
   );
