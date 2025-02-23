@@ -79,7 +79,7 @@ export default function CreateUserScreen() {
           </TouchableOpacity>
         </View>
         <Text style={styles.responseText}>Don't have an account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('signup')}>
+        <TouchableOpacity onPress={() => navigation.navigate('tasks')}>
         <Text style={[styles.responseText, { color: 'blue' }]}>Sign Up</Text>
         </TouchableOpacity>
       </View>
