@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Dimensions } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import the navigation hook
+import { useNavigation } from '@react-navigation/native'; 
 
 const Tasks: React.FC = () => {
-  const navigation = useNavigation(); // Get the navigation object
-  const { height } = Dimensions.get('window'); // Get the screen height
+  const navigation = useNavigation(); 
+  const { height } = Dimensions.get('window'); 
 
   const handleButtonPress = (taskCount: number) => {
     navigation.navigate('(tabs)');
