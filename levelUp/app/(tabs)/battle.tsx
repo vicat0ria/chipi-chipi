@@ -1,28 +1,32 @@
 import React from 'react';
 import Blitz from '../../assets/images/blitz.png'
 import Background from '../../assets/images/battle_background.png'
+import { useNavigation } from '@react-navigation/native'; // Import the navigation hook
 import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Image } from 'react-native';
 
 const LessonScreen: React.FC = () => {
+
+    const navigation = useNavigation(); 
+
     return (
         <ImageBackground
         source={Background}
         style={styles.background}
             imageStyle={styles.backgroundImage} // Apply zoom only to the background image
         >
-            {/* Top-middle corner: Lvl and XP */}
+            {/* Top-middle corner: Lvl*/}
             <View style={styles.topLeftCorner}>
-                <Text style={styles.levelText}>Lvl 1</Text>
+                <Text style={styles.levelText}>LVL 1</Text>
             </View>
 
-            {/* Top-middle corner: Lvl and XP */}
+            {/* Top-middle corner: XP*/}
                 <View style={styles.topRightCorner}>
-                <Text style={styles.xpText}>XP: 0/10</Text>
+                <Text style={styles.xpText}>XP: 0/5</Text>
             </View>
 
-            {/* Centered: "Start Lesson" button */}
+            {/* Centered: "Play" button */}
             <View style={styles.centerContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => {}}>
+                <TouchableOpacity style={styles.button} onPress={() => {navigation.navigate('boss-battle')}}>
                     <Text style={styles.buttonText}>Play</Text>
                 </TouchableOpacity>
             </View>
@@ -43,10 +47,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     backgroundImage: {
-        width: "100%",
-        height: "100%",
+        width: "150%",
+        height: "150%",
         resizeMode: "cover",
+        marginTop: -350,  // Moves background lower
+        marginLeft: -100,
     },
+    
     topLeftCorner: {
         position: "absolute",
         top:50,
@@ -87,7 +94,7 @@ xpText: {
         justifyContent: "center",
         alignItems: "center",
         position: "absolute", // Required when using `top`
-        top: "55%", // Adjust to move it lower
+        bottom: "50%", // Adjust to move it lower
         left: "40%", // Center it horizontally
         transform: [{ translateX: -50 }],
     },
@@ -106,10 +113,10 @@ xpText: {
   },
     bottomImage: {
         position: "absolute",
-        right: 75,
+        right: 85,
         bottom: 50,
         width: "80%", // Adjust width as needed
-        height: 250, // Adjust height as needed
+        height: 300, // Adjust height as needed
         resizeMode: "contain",
         transform: [{ scaleX: -1 }], // Mirror the bottom image
 
