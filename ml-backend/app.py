@@ -1,51 +1,57 @@
+import os
 from flask import Flask, request, jsonify
-import pickle
-from tensorflow.keras.models import load_model
+from flask_cors import CORS
+from PIL import Image
 import numpy as np
-import cv2
-import base64
-
-model = load_model('trained_model.h5')
-label_mapping = {0: 'A', 1: 'B', 2: 'C', 3: 'D'}
+import tensorflow as tf
+from io import BytesIO
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS to allow requests from different origins
 
-# Load trained model
-with open("model.pkl", "rb") as f:
-    model, vectorizer = pickle.load(f)
+# Load your trained model (make sure your model is saved as 'model.h5' or update accordingly)
+model = tf.keras.models.load_model('trained_model.h5')
 
-@app.route("/")
-def home():
-    return "Flask is running!"
+def preprocess_image(image):
+    """
+    Preprocess the image for your model (resize, normalize, etc.).
+    Modify based on your model's input size and type.
+    """
+    image = Image.open(image)
+    image = image.convert("RGB")  # Ensure it's in RGB format
+    image = image.resize((64, 64))  # Resize to the model's expected input size
+    image = np.array(image)
+    image = image / 255.0  # Normalize if needed
+    image = np.expand_dims(image, axis=0)  # Add batch dimension
+    return image
 
-@app.route("/temp", methods=["POST"])
-def test():
-    return "success"
-
-@app.route("/predict", methods=["POST"])
+@app.route('/predict_rfc', methods=['POST'])
 def predict():
-    if 'image' not in request.json:
-        return jsonify({"error": "No image provided"}), 400
+    print(0)
+    if 'image' not in request.files:
+        return jsonify({"error": "No image file provided"}), 400
+    
+    # Get the uploaded file
+    image_file = request.files['image']
 
-    image_base64 = request.json['image']
-    image_data = base64.b64decode(base64_string)
-    with open(output_path, 'wb') as file:
-        file.write(image_data)
-    image_array = np.asarray(bytearray(image_data), dtype=np.uint8)
-    image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
-
-    # Preprocess the image
-    image = cv2.resize(image, (64, 64))
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) / 255.0 
-    image_array = np.expand_dims(image, axis=0)
-
-    # Predict using CNN
-    prediction = model.predict(image_array)
-    predicted_class = np.argmax(prediction, axis=1)[0]
-
-    return jsonify({"prediction": predicted_class})
-
-
+    try:
+        # Preprocess the image
+        image = preprocess_image(image_file)
+        
+        # Make prediction
+        prediction = model.predict(image)
+        
+        # If you're using classification, the result could be the index of the max prediction
+        predicted_class = np.argmax(prediction, axis=1)[0]
+        
+        # If your model gives labels, you can map the index to class names
+        class_names = ["A", "B", "C", "D"]  # Replace with actual class names
+        predicted_label = class_names[predicted_class]
+        
+        return jsonify({"prediction": predicted_label})
+    
+    except Exception as e:
+        return jsonify({"error": f"Error processing the image: {str(e)}"}), 500
 
 if __name__ == "__main__":
     app.run(host="10.40.106.51", port=5000, debug=True)

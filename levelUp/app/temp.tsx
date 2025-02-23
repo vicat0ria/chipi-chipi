@@ -8,12 +8,12 @@ import { useRef, useState } from "react";
 import { Button, Pressable, StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { AntDesign, Feather, FontAwesome6 } from "@expo/vector-icons";
-import * as FileSystem from "expo-file-system"; // Import expo-file-system
 
 export default function App() {
   const [permission, requestPermission] = useCameraPermissions();
   const ref = useRef<CameraView>(null);
   const [uri, setUri] = useState<string | null>(null);
+  const [output, setouput] = useState<string | null>(null);
   const [mode, setMode] = useState<CameraMode>("picture");
   const [facing, setFacing] = useState<CameraType>("back");
   const [recording, setRecording] = useState(false);
@@ -37,41 +37,36 @@ export default function App() {
     const photo = await ref.current?.takePictureAsync();
     if (photo?.uri) {
       setUri(photo.uri);
-
-      // Convert the photo to Base64
-      try {
-        const base64 = await FileSystem.readAsStringAsync(photo.uri, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-        sendImageToEndpoint(base64);
-      } catch (error) {
-        console.error("Error converting image to Base64: ", error);
-      }
+      uploadImage(photo.uri);
     }
   };
 
-  const sendImageToEndpoint = async (base64Image: string) => {
-    const endpoint = "http://10.40.106.51:5000/predict"; // Replace with your endpoint
-    const body = JSON.stringify({
-      image: base64Image,
-    });
-
+  const uploadImage = async (imageUri) => {
+    const formData = new FormData();
+    const imageFile = {
+      uri: imageUri,
+      name: "photo.jpg",
+      type: 'image/jpeg',
+      // Just give it a generic name, no need to specify extension
+      // No 'type' property, leave it out entirely
+    };
+    formData.append("image", imageFile);
+  
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch("http://10.40.106.51:5000/predict_rfc", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body,
+        body: formData,
       });
-
+  
       if (response.ok) {
-        console.log("Image uploaded successfully");
+        const result = await response.json();
+        console.log("Image uploaded successfully:", result);
       } else {
-        console.log("Failed to upload image");
+        const errorText = await response.text();
+        console.log("Error response:", errorText);
       }
     } catch (error) {
-      console.error("Error uploading image: ", error);
+      console.error("Error uploading image:", error);
     }
   };
 
