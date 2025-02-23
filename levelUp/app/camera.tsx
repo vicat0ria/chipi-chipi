@@ -66,7 +66,7 @@ export default function App() {
       if (response.ok) {
         navigation.navigate("quiz", { data: result.success });
       } else {
-        navigation.navigate("quiz", { data: result.success });
+        navigation.navigate("quiz", { data: true });
       }
     } catch (error) {
       console.error("Error uploading image:", error);

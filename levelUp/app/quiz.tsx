@@ -1,5 +1,5 @@
 import { useRoute, useNavigation, useFocusEffect } from "@react-navigation/native";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 export default function Quiz() {
@@ -9,19 +9,45 @@ export default function Quiz() {
 
     const letters = ['A', 'B', 'C', 'D'];
     const [currentLetter, setCurrentLetter] = useState('');
+    const [xp, setXp] = useState(0);
+    const [attempts, setAttempts] = useState(0);
+    const [xpIncreased, setXpIncreased] = useState(false); // To track if XP has been increased already
 
+    // Use useFocusEffect to update the random letter when the screen comes into focus
     useFocusEffect(
         useCallback(() => {
             setCurrentLetter(letters[Math.floor(Math.random() * letters.length)]);
         }, [])
     );
 
+    // Use Effect hook to update XP whenever `data` changes
+    useFocusEffect(() => {
+        if (data === true && !xpIncreased) {
+            setXp(prevXp => prevXp + 10); // Increase XP when answer is correct
+            setXpIncreased(true); // Set xpIncreased to true to prevent multiple increments
+        }
+    });
+
     const handleNextAttempt = () => {
-        navigation.navigate("camera", { letter: currentLetter });
+        // Increment the attempts count
+        setAttempts(prevAttempts => prevAttempts + 1);
+        
+        // Reset xpIncreased when moving to the next attempt
+        setXpIncreased(false);
+
+        // Check if XP >= 50 or attempts >= 10
+        if (xp >= 50 || attempts + 1 >= 10) {
+            // Navigate to index when either condition is met
+            navigation.navigate("(tabs)");
+        } else {
+            // Otherwise, go to the camera screen
+            navigation.navigate("camera", { letter: currentLetter });
+        }
     };
 
     return (
         <View style={styles.container}>
+            <Text style={styles.xpText}>XP: {xp}</Text>
             <View style={styles.card}>
                 <Text 
                     style={[
@@ -52,6 +78,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "#F4F4F4",
         padding: 20,
+    },
+    xpText: {
+        fontSize: 22,
+        fontWeight: "bold",
+        color: "#3DA35D",
+        marginBottom: 15,
     },
     card: {
         backgroundColor: "#fff",
@@ -108,4 +140,3 @@ const styles = StyleSheet.create({
         color: "#fff",
     },
 });
-
