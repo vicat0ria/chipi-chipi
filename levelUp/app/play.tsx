@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, Button, TouchableOpacity} from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import the navigation hook
 
 const PlayScreen: React.FC = () => {
-    const navigation = useNavigation(); // Get the navigation object
+  const navigation = useNavigation(); // Get the navigation object
 
   const lessons = [
     { letter: 'A', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Sign_language_A.svg/646px-Sign_language_A.svg.png' },
@@ -14,8 +14,8 @@ const PlayScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.lessonTitle}>Lesson 1</Text>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.lessonTitle}>Lesson 1</Text>
         {lessons.map((lesson, index) => (
           <View key={index} style={styles.lessonContainer}>
             <Text style={styles.subtitle}>Letter {lesson.letter}</Text>
@@ -24,16 +24,15 @@ const PlayScreen: React.FC = () => {
               style={styles.image}
               resizeMode="contain"
             />
-
           </View>
-          
         ))}
-              <TouchableOpacity 
-              style={styles.btn} 
-              onPress={() => navigation.navigate('temp')}
-            >
-              <Text style={styles.btnText}>Quiz</Text>
-            </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.btn} 
+          onPress={() => navigation.navigate('temp')}
+        >
+          <Text style={styles.btnText}>Quiz</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -57,6 +56,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     alignItems: 'center',
+    paddingBottom: 20, // Adds padding at the bottom for the button
   },
   lessonContainer: {
     marginBottom: 40,
