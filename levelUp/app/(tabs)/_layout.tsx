@@ -34,13 +34,27 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="battle"
         options={{
-          title: 'Random',
+          title: 'Battle',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />
       <Tabs.Screen
+        name="leaderboard"
+        options={{
+          title: 'Leaderboard',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+        }}
+      />
+      {/* <Tabs.Screen
         name="camera"
         options={{
           title: 'Camera',
@@ -53,6 +67,7 @@ export default function TabLayout() {
           title: 'ML',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
+<<<<<<< HEAD
       />
       <Tabs.Screen
         name="test"
@@ -61,6 +76,9 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />
+=======
+      /> */}
+>>>>>>> main
     </Tabs>
     
   );

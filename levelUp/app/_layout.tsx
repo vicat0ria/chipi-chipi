@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import TempScreen from './temp'; 
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -30,7 +31,14 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
+        <Stack.Screen name="index" options={{ title: 'Login Screen', headerShown: false }} />
+        {/* Main Tab Navigation */}
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        {/* Handle "not found" route */}
+        <Stack.Screen name="temp" options={{ title: 'Temp Screen', headerShown: true}} />
+        <Stack.Screen name="play" options={{ title: 'Play Screen', headerShown: true }} />
+        <Stack.Screen name="tasks" options={{ title: 'Task Screen', headerShown: true }} />
+
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
