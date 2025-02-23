@@ -31,7 +31,7 @@ export default function CreateUserScreen() {
         setResponse(result.data.error);
       } else {
         setResponse(result.data.message);
-        navigation.navigate('(tabs)');
+        navigation.navigate('tasks');
       }
     } catch (error) {
       console.error("Error:", error);

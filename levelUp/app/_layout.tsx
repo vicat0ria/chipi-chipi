@@ -37,6 +37,7 @@ export default function RootLayout() {
         {/* Handle "not found" route */}
         <Stack.Screen name="temp" options={{ title: 'Temp Screen', headerShown: true}} />
         <Stack.Screen name="play" options={{ title: 'Play Screen', headerShown: true }} />
+        <Stack.Screen name="tasks" options={{ title: 'Task Screen', headerShown: true }} />
 
         <Stack.Screen name="+not-found" />
       </Stack>

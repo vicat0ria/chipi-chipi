@@ -1,39 +1,25 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Button } from 'react-native';
+import { router } from 'expo-router';
 import { useNavigation } from '@react-navigation/native'; // Import the navigation hook
 
-const PlayScreen: React.FC = () => {
-  const navigation = useNavigation(); // Get the navigation object
-
-  const lessons = [
-    { letter: 'A', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Sign_language_A.svg/646px-Sign_language_A.svg.png' },
-    { letter: 'B', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Sign_language_B.svg/396px-Sign_language_B.svg.png' },
-    { letter: 'C', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Sign_language_C.svg/832px-Sign_language_C.svg.png' },
-    { letter: 'D', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Sign_language_D.svg/484px-Sign_language_D.svg.png' }
-  ];
+const HomeScreen: React.FC = () => {
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.lessonTitle}>Lesson 1</Text>
-        {lessons.map((lesson, index) => (
-          <View key={index} style={styles.lessonContainer}>
-            <Text style={styles.subtitle}>Letter {lesson.letter}</Text>
-            <Image 
-              source={{ uri: lesson.imageUrl }}
-              style={styles.image}
-              resizeMode="contain"
-            />
-          </View>
-        ))}
-
-        <TouchableOpacity 
-          style={styles.btn} 
-          onPress={() => navigation.navigate('temp')}
-        >
-          <Text style={styles.btnText}>Quiz</Text>
-        </TouchableOpacity>
-      </ScrollView>
+      <View style={styles.content}>
+        <Text style={styles.expTitle}>EXP: 1765</Text>
+        <View style={styles.line} />
+        <Text style={styles.subtitle}>American Sign Language</Text>
+        <Text style={styles.subtitle}>Level 1</Text>
+    <TouchableOpacity 
+      style={styles.button} 
+      onPress={() => navigation.navigate('play')}
+    >
+      <Text style={styles.buttonText}>Learn</Text>
+    </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -41,55 +27,48 @@ const PlayScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#F5F5F5',
     paddingHorizontal: 20,
   },
-  lessonTitle: {
-    fontSize: 32,
+  content: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 50,
+  },
+  expTitle: {
+    fontSize: 36,
     fontWeight: 'bold',
     color: '#3DA35D',
-    marginBottom: 20,
-    marginTop: 20,
     textAlign: 'center',
   },
-  scrollContainer: {
-    alignItems: 'center',
-    paddingBottom: 20,
-  },
-  lessonContainer: {
-    marginBottom: 40,
-    alignItems: 'center',
-  },
-  image: {
-    width: 200,
-    height: 200,
+  line: {
+    width: '80%',
+    height: 2,
+    backgroundColor: '#3DA35D',
+    marginVertical: 30,
   },
   subtitle: {
     fontSize: 24,
     color: '#555',
     textAlign: 'center',
     marginBottom: 10,
-    fontWeight: 'bold',
+    fontWeight:'bold',
   },
-  btn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 30,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderWidth: 1,
+  button: {
     backgroundColor: '#3DA35D',
-    borderColor: '#3DA35D',
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    borderRadius: 5,
+    marginVertical: 30,
   },
-  btnText: {
-    fontSize: 18,
-    lineHeight: 26,
-    fontWeight: '600',
-    color: '#fff',
+  buttonText: {
+    fontSize: 30,
+    color: '#FFF',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
-export default PlayScreen;
+export default HomeScreen;
+
