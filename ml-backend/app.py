@@ -3,6 +3,7 @@ import pickle
 from tensorflow.keras.models import load_model
 import numpy as np
 import cv2
+import base64
 
 model = load_model('trained_model.h5')
 label_mapping = {0: 'A', 1: 'B', 2: 'C', 3: 'D'}
@@ -23,28 +24,27 @@ def test():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    if 'image' not in request.files:
+    if 'image' not in request.json:
         return jsonify({"error": "No image provided"}), 400
-    
-    image_file = request.files['image']
 
-    in_memory_image = image_file.read()
-    image_array = np.asarray(bytearray(in_memory_image), dtype=np.uint8)
+    image_base64 = request.json['image']
+    image_data = base64.b64decode(base64_string)
+    with open(output_path, 'wb') as file:
+        file.write(image_data)
+    image_array = np.asarray(bytearray(image_data), dtype=np.uint8)
     image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
-    
-    if image is None:
-        return jsonify({"error": "Invalid image format"}), 400
-    
-    image = cv2.resize(image, (64, 64))  
+
+    # Preprocess the image
+    image = cv2.resize(image, (64, 64))
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) / 255.0 
-    image_array = np.expand_dims(image, axis=0) 
-    
+    image_array = np.expand_dims(image, axis=0)
+
+    # Predict using CNN
     prediction = model.predict(image_array)
     predicted_class = np.argmax(prediction, axis=1)[0]
 
-    predicted_label = label_mapping[predicted_class]
+    return jsonify({"prediction": predicted_class})
 
-    return jsonify({"prediction": predicted_label})
 
 
 if __name__ == "__main__":

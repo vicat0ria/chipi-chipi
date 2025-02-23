@@ -8,6 +8,7 @@ import { useRef, useState } from "react";
 import { Button, Pressable, StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { AntDesign, Feather, FontAwesome6 } from "@expo/vector-icons";
+import * as FileSystem from "expo-file-system"; // Import expo-file-system
 
 export default function App() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -36,30 +37,41 @@ export default function App() {
     const photo = await ref.current?.takePictureAsync();
     if (photo?.uri) {
       setUri(photo.uri);
-      uploadImage(photo.uri);
+
+      // Convert the photo to Base64
+      try {
+        const base64 = await FileSystem.readAsStringAsync(photo.uri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        sendImageToEndpoint(base64);
+      } catch (error) {
+        console.error("Error converting image to Base64: ", error);
+      }
     }
   };
 
-  const uploadImage = async (imageUri: string) => {
-    const formData = new FormData();
-    formData.append("file", {
-      uri: imageUri,
-      name: "photo.jpg",
-      type: "image/jpeg",
-    } as any);
+  const sendImageToEndpoint = async (base64Image: string) => {
+    const endpoint = "http://10.40.106.51:5000/predict"; // Replace with your endpoint
+    const body = JSON.stringify({
+      image: base64Image,
+    });
 
     try {
-      const response = await fetch("http://10.40.106.51:5000/tem", {
+      const response = await fetch(endpoint, {
         method: "POST",
-        body: formData,
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
+        body,
       });
-      const result = await response.json();
-      console.log("Upload success:", result);
+
+      if (response.ok) {
+        console.log("Image uploaded successfully");
+      } else {
+        console.log("Failed to upload image");
+      }
     } catch (error) {
-      console.error("Upload failed:", error);
+      console.error("Error uploading image: ", error);
     }
   };
 
