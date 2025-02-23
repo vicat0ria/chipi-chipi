@@ -1,7 +1,7 @@
 # LevelUp ASL (Subject to Change)
 
 ## Description  
-**LevelUp ASL** is a fun, ADHD-friendly mobile app designed to help users build their ASL (American Sign Language) skills through gaming. The app is tailored for young adults with ADHD, leveraging gamification techniques to reinforce learning habits in an engaging and accessible way.  
+**LevelUp ASL:** is a fun, ADHD-friendly mobile app designed to help users build their ASL (American Sign Language) skills through gaming. The app is tailored for young adults with ADHD, leveraging gamification techniques to reinforce learning habits in an engaging and accessible way.  
 
 **App Type:** Cross-platform mobile app (ADA Accessible)  
 

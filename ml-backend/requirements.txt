@@ -1,0 +1,9 @@
+opencv-python
+pandas
+scikit-learn
+tensorflow
+Flask
+request
+jsonify
+flask_jwt_extended
+pymongo
