@@ -29,7 +29,7 @@ const PlayScreen: React.FC = () => {
 
         <TouchableOpacity 
           style={styles.btn} 
-          onPress={() => navigation.navigate('temp')}
+          onPress={() => navigation.navigate('quiz')}
         >
           <Text style={styles.btnText}>Quiz</Text>
         </TouchableOpacity>

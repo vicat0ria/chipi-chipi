@@ -1,6 +1,5 @@
 import os
 from flask import Flask, request, jsonify
-import pickle
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from pymongo import MongoClient
 import bcrypt
@@ -41,14 +40,13 @@ def preprocess_image(image):
     image = np.expand_dims(image, axis=0)  # Add batch dimension
     return image
 
-@app.route('/predict_rfc', methods=['POST'])
+@app.route('/predict', methods=['POST'])
 def predict():
-    print(0)
-    if 'image' not in request.files:
-        return jsonify({"error": "No image file provided"}), 400
+    if 'image' not in request.files or 'expected_result' not in request.form:
+        return jsonify({"error": "Missing image or expected result"}), 400
     
-    # Get the uploaded file
     image_file = request.files['image']
+    expected_result = request.form['expected_result'].strip().upper()  # Ensure uppercase for comparison
 
     try:
         # Preprocess the image
@@ -57,14 +55,21 @@ def predict():
         # Make prediction
         prediction = model.predict(image)
         
-        # If you're using classification, the result could be the index of the max prediction
+        # If classification, get the predicted class
         predicted_class = np.argmax(prediction, axis=1)[0]
         
-        # If your model gives labels, you can map the index to class names
-        class_names = ["A", "B", "C", "D"]  # Replace with actual class names
+        # Class names mapping
+        class_names = ["A", "B", "C", "D"]  # Adjust based on model
         predicted_label = class_names[predicted_class]
-        
-        return jsonify({"prediction": predicted_label})
+
+        # Compare predicted label with expected result
+        if predicted_label == expected_result:
+            return jsonify({"success": True})
+        else:
+            return jsonify({"success": False}), 400
+
+    except Exception as e:
+        return jsonify({"error": f"Error processing the image: {str(e)}"}), 500
     
     except Exception as e:
         return jsonify({"error": f"Error processing the image: {str(e)}"}), 500
@@ -166,8 +171,4 @@ def save_boss():
     return jsonify({"message": "Item saved successfully"})
 
 if __name__ == "__main__":
-    app.run(host="10.40.125.220", port=5000, debug=True)
-
-
-
-
+    app.run(host="10.40.106.51", port=5000, debug=True)

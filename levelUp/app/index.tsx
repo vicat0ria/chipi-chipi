@@ -19,24 +19,25 @@ export default function CreateUserScreen() {
   const [response, setResponse] = useState<string>("");
 
   const handleSubmit = async () => {
-    try {
-      // Send the username and password to your Flask API
-      const result = await axios.post<CreateUserResponse>(
-        "http://10.40.125.220:5000/create_user",
-        { username, password }
-      );
+    navigation.navigate('tasks');
+    // try {
+    //   // Send the username and password to your Flask API
+    //   const result = await axios.post<CreateUserResponse>(
+    //     "http://10.40.106.51:5000/create_user",
+    //     { username, password }
+    //   );
       
-      // Display response message from API
-      if (result.data.error) {
-        setResponse(result.data.error);
-      } else {
-        setResponse(result.data.message);
-        navigation.navigate('tasks');
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      setResponse("Error fetching response");
-    }
+    //   // Display response message from API
+    //   if (result.data.error) {
+    //     setResponse(result.data.error);
+    //   } else {
+    //     setResponse(result.data.message);
+    //     navigation.navigate('tasks');
+    //   }
+    // } catch (error) {
+    //   console.error("Error:", error);
+    //   setResponse("Error fetching response");
+    // }
   };
 
   return (
