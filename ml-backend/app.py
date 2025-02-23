@@ -212,6 +212,42 @@ def get_leaderboard():
 
     return "True"
 
+@app.route("/get_level", methods=["GET"])
+@jwt_required()  # Ensure parentheses are used here
+def get_level():
+    users = db["users"]
+    username = get_jwt_identity()
+
+    user = users.find_one({"username": username})
+
+    if user:  # First, check if user exists
+        user_level = user.get("level")  # Now, safely access the 'level'
+        print(user_level)
+        return jsonify({"level": user_level}), 200  # Return user level in JSON format
+    else:
+        return jsonify({"error": "User not found"}), 404  # If no user is found
+
+@app.route("/update_level",methods=["POST"])
+@jwt_required()
+def update_level():
+    data = request.get_json()
+    print(data)
+    level = data.get("level")
+
+    users = db["users"]
+    username = get_jwt_identity()
+
+    user = users.find_one({"username":username})
+
+    print(level)
+
+    if user:
+        users.update_one({"username":username},{"$set":{"level":level}})
+        return jsonify({"level": level}), 200  # Return user level in JSON format
+    else:
+        return jsonify({"error": "User not found"}), 404  # If no user is found
+
+
 
 if __name__ == "__main__":
     app.run(host="10.40.125.220", port=5000, debug=True)
