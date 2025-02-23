@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { View, TextInput, Button, Text, StyleSheet, Image} from "react-native";
 import { useNavigation } from '@react-navigation/native'; // Import the navigation hook
 import logo from '../assets/images/LU-Logo.png';
-import character from '../assets/images/character.png';
 import { TouchableOpacity } from 'react-native';
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import character from '../assets/images/character.png';
 
 type CreateUserResponse = {
   message: string;
@@ -24,7 +23,7 @@ export default function CreateUserScreen() {
     try {
       // Send the username and password to your Flask API
       const result = await axios.post<CreateUserResponse>(
-        "http://10.40.125.220:5000/login",
+        "http://10.40.125.220:5000/create_user",
         { username, password }
       );
       
@@ -33,8 +32,6 @@ export default function CreateUserScreen() {
         setResponse(result.data.error);
       } else {
         setResponse(result.data.message);
-        console.log(result.data.token)
-        await AsyncStorage.setItem('authToken', result.data.token);  // Save token
         navigation.navigate('tasks');
       }
     } catch (error) {
@@ -52,7 +49,7 @@ export default function CreateUserScreen() {
             style={styles.headerImg}
             source={logo}
           />
-        <Text style={styles.title}>Log in to LevelUp!</Text>
+        <Text style={styles.title}>Sign Up to LevelUp!</Text>
         <Text style={styles.subtitle}>Are you ready to conquer the ASL Bosses?</Text>
       </View>
 
@@ -73,21 +70,19 @@ export default function CreateUserScreen() {
         />
 
       <View style={styles.formAction}>
+          <Text style={styles.responseText}>{response}</Text>
           
           <TouchableOpacity style={styles.btn} onPress={handleSubmit}>
-            <Text style={styles.btnText}>Log In</Text>
+            <Text style={styles.btnText}>Sign Up</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.responseText}>Don't have an account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('tasks')}>
-        <Text style={[styles.responseText, { color: 'blue' }]}>Sign Up</Text>
-        </TouchableOpacity>
-                <Image
-                    alt="Character"
-                    resizeMode="contain"
-                    style={styles.character}
-                    source={character}
-                  />
+        <Text style={styles.responseText}>Already have an account?</Text>
+        <Image
+            alt="Character"
+            resizeMode="contain"
+            style={styles.character}
+            source={character}
+          />
       </View>
     </View>
   );
