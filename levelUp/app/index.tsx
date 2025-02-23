@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native'; // Import the navigati
 import logo from '../assets/images/LU-Logo.png';
 import { TouchableOpacity } from 'react-native';
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type CreateUserResponse = {
   message: string;
@@ -22,7 +23,7 @@ export default function CreateUserScreen() {
     try {
       // Send the username and password to your Flask API
       const result = await axios.post<CreateUserResponse>(
-        "http://10.40.144.249:5000/create_user",
+        "http://10.40.144.249:5000/login",
         { username, password }
       );
       
@@ -31,6 +32,8 @@ export default function CreateUserScreen() {
         setResponse(result.data.error);
       } else {
         setResponse(result.data.message);
+        console.log(result.data.token)
+        await AsyncStorage.setItem('authToken', result.data.token);  // Save token
         navigation.navigate('tasks');
       }
     } catch (error) {
@@ -48,7 +51,7 @@ export default function CreateUserScreen() {
             style={styles.headerImg}
             source={logo}
           />
-        <Text style={styles.title}>Sign Up to LevelUp!</Text>
+        <Text style={styles.title}>Log in to LevelUp!</Text>
         <Text style={styles.subtitle}>Are you ready to conquer the ASL Bosses?</Text>
       </View>
 
@@ -72,10 +75,13 @@ export default function CreateUserScreen() {
           <Text style={styles.responseText}>{response}</Text>
           
           <TouchableOpacity style={styles.btn} onPress={handleSubmit}>
-            <Text style={styles.btnText}>Sign Up</Text>
+            <Text style={styles.btnText}>Log In</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.responseText}>Already have an account?</Text>
+        <Text style={styles.responseText}>Don't have an account?</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('signup')}>
+        <Text style={[styles.responseText, { color: 'blue' }]}>Sign Up</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

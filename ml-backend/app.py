@@ -126,7 +126,7 @@ def create_user():
 
     return jsonify({"message": "User registered successfully", "token": access_token}), 201
 
-@app.route('/login', methods=['GET'])
+@app.route('/login', methods=['POST'])
 def get_user():
     # Get the username from the request arguments
     data = request.get_json()

@@ -22,7 +22,7 @@ export default function CreateUserScreen() {
     try {
       // Send the username and password to your Flask API
       const result = await axios.post<CreateUserResponse>(
-        "http://10.40.144.249:5000/login",
+        "http://10.40.144.249:5000/create_user",
         { username, password }
       );
       
@@ -48,7 +48,7 @@ export default function CreateUserScreen() {
             style={styles.headerImg}
             source={logo}
           />
-        <Text style={styles.title}>Log in to LevelUp!</Text>
+        <Text style={styles.title}>Sign Up to LevelUp!</Text>
         <Text style={styles.subtitle}>Are you ready to conquer the ASL Bosses?</Text>
       </View>
 
@@ -72,13 +72,10 @@ export default function CreateUserScreen() {
           <Text style={styles.responseText}>{response}</Text>
           
           <TouchableOpacity style={styles.btn} onPress={handleSubmit}>
-            <Text style={styles.btnText}>Log In</Text>
+            <Text style={styles.btnText}>Sign Up</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.responseText}>Don't have an account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('index')}>
-        <Text style={[styles.responseText, { color: 'blue' }]}>Sign Up</Text>
-        </TouchableOpacity>
+        <Text style={styles.responseText}>Already have an account?</Text>
       </View>
     </View>
   );
