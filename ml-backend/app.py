@@ -1,8 +1,14 @@
+import os
 from flask import Flask, request, jsonify
 import pickle
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from pymongo import MongoClient
 import bcrypt
+from flask_cors import CORS
+from PIL import Image
+import numpy as np
+import tensorflow as tf
+from io import BytesIO
 
 def hash_password(password):
     salt = bcrypt.gensalt()
@@ -12,51 +18,62 @@ def hash_password(password):
 def verify_password(input_password, hashed_password):
     return bcrypt.checkpw(input_password.encode('utf-8'), hashed_password)
 
+
 app = Flask(__name__)
+CORS(app)  # Enable CORS to allow requests from different origins
 
 # Load trained model
 #with open("model.pkl", "rb") as f:
    # model, vectorizer = pickle.load(f)
+# Load your trained model (make sure your model is saved as 'model.h5' or update accordingly)
+model = tf.keras.models.load_model('trained_model.h5')
 
-@app.route("/")
-def home():
-    return "Flask is running!"
+def preprocess_image(image):
+    """
+    Preprocess the image for your model (resize, normalize, etc.).
+    Modify based on your model's input size and type.
+    """
+    image = Image.open(image)
+    image = image.convert("RGB")  # Ensure it's in RGB format
+    image = image.resize((64, 64))  # Resize to the model's expected input size
+    image = np.array(image)
+    image = image / 255.0  # Normalize if needed
+    image = np.expand_dims(image, axis=0)  # Add batch dimension
+    return image
 
-@app.route("/temp", methods=["POST"])
-def test():
-    return "success"
-
-@app.route("/predict", methods=["POST"])
+@app.route('/predict_rfc', methods=['POST'])
 def predict():
+    print(0)
     if 'image' not in request.files:
-        return jsonify({"error": "No image provided"}), 400
+        return jsonify({"error": "No image file provided"}), 400
     
+    # Get the uploaded file
     image_file = request.files['image']
 
-    in_memory_image = image_file.read()
-    image_array = np.asarray(bytearray(in_memory_image), dtype=np.uint8)
-    image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+    try:
+        # Preprocess the image
+        image = preprocess_image(image_file)
+        
+        # Make prediction
+        prediction = model.predict(image)
+        
+        # If you're using classification, the result could be the index of the max prediction
+        predicted_class = np.argmax(prediction, axis=1)[0]
+        
+        # If your model gives labels, you can map the index to class names
+        class_names = ["A", "B", "C", "D"]  # Replace with actual class names
+        predicted_label = class_names[predicted_class]
+        
+        return jsonify({"prediction": predicted_label})
     
-    if image is None:
-        return jsonify({"error": "Invalid image format"}), 400
-    
-    image = cv2.resize(image, (64, 64))  
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) / 255.0 
-    image_array = np.expand_dims(image, axis=0) 
-    
-    prediction = model.predict(image_array)
-    predicted_class = np.argmax(prediction, axis=1)[0]
-
-    predicted_label = label_mapping[predicted_class]
-
-    return jsonify({"prediction": predicted_label})
+    except Exception as e:
+        return jsonify({"error": f"Error processing the image: {str(e)}"}), 500
 
 # MongoDB connection string
 MONGO_URI = "mongodb+srv://albertosandoval950:y6fmhzmwJMY0kZV9@users.a7kxh.mongodb.net/?retryWrites=true&w=majority&appName=Users"
 client = MongoClient(MONGO_URI)
 db = client["LevelUp"]
 collection = db["users"]
-
 
 # Helper function to convert ObjectId to string
 def serialize_user(user):
@@ -65,7 +82,7 @@ def serialize_user(user):
 
 @app.route('/create_user', methods=['POST'])
 def create_user():
-    data = request.get_json();
+    data = request.get_json()
 
     username = data.get("username")
     password = data.get("password")
@@ -74,7 +91,6 @@ def create_user():
     power = 1
     health = 10
     dexterity = 0
-
 
     if not username or not password:
         return jsonify({"error":"Missing required fields"}), 400
@@ -97,12 +113,10 @@ def create_user():
 
     return jsonify({"message":"User registered successfully"}), 201
 
-
-
 @app.route('/login', methods=['GET'])
 def get_user():
     # Get the username from the request arguments
-    data = request.get_json();
+    data = request.get_json()
 
     username = data.get("username")
     inputted_password = data.get("password")
@@ -114,8 +128,6 @@ def get_user():
 
     # Query the database for the user with the inputted username
 
-    print(user)
-
     correct_password = user["password"].encode("utf-8")
 
     if user and verify_password(inputted_password,correct_password):
@@ -124,7 +136,6 @@ def get_user():
     else:
         # If user is not found, return a 404 response
         return jsonify({"error": "User not found"}), 404
-
 
 @app.route("/save_boss", methods=["POST"])
 @jwt_required()

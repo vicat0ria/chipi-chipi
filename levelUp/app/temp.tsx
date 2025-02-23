@@ -13,6 +13,7 @@ export default function App() {
   const [permission, requestPermission] = useCameraPermissions();
   const ref = useRef<CameraView>(null);
   const [uri, setUri] = useState<string | null>(null);
+  const [output, setouput] = useState<string | null>(null);
   const [mode, setMode] = useState<CameraMode>("picture");
   const [facing, setFacing] = useState<CameraType>("back");
   const [recording, setRecording] = useState(false);
@@ -40,26 +41,32 @@ export default function App() {
     }
   };
 
-  const uploadImage = async (imageUri: string) => {
+  const uploadImage = async (imageUri) => {
     const formData = new FormData();
-    formData.append("file", {
+    const imageFile = {
       uri: imageUri,
       name: "photo.jpg",
-      type: "image/jpeg",
-    } as any);
-
+      type: 'image/jpeg',
+      // Just give it a generic name, no need to specify extension
+      // No 'type' property, leave it out entirely
+    };
+    formData.append("image", imageFile);
+  
     try {
-      const response = await fetch("http://10.40.106.51:5000/tem", {
+      const response = await fetch("http://10.40.106.51:5000/predict_rfc", {
         method: "POST",
         body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
       });
-      const result = await response.json();
-      console.log("Upload success:", result);
+  
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Image uploaded successfully:", result);
+      } else {
+        const errorText = await response.text();
+        console.log("Error response:", errorText);
+      }
     } catch (error) {
-      console.error("Upload failed:", error);
+      console.error("Error uploading image:", error);
     }
   };
 
