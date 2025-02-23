@@ -1,10 +1,10 @@
 import React from 'react';
 import Blitz from '../../assets/images/blitz.png'
-import Background from '../../assets/images/battle_background.png'
+import Background from '../../assets/images/battle_background.png'  //https://opengameart.org/content/green-meadow-pixel-art-background
 import { useNavigation } from '@react-navigation/native'; // Import the navigation hook
 import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Image } from 'react-native';
 
-const LessonScreen: React.FC = () => {
+const MenuScreen: React.FC = () => {
 
     const navigation = useNavigation(); 
 
@@ -26,7 +26,7 @@ const LessonScreen: React.FC = () => {
 
             {/* Centered: "Play" button */}
             <View style={styles.centerContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => {navigation.navigate('boss-battle')}}>
+                <TouchableOpacity style={styles.button} onPress={() => {navigation.navigate('char-stats')}}>
                     <Text style={styles.buttonText}>Play</Text>
                 </TouchableOpacity>
             </View>
@@ -123,4 +123,4 @@ xpText: {
     },
 });
 
-export default LessonScreen;
+export default MenuScreen;
