@@ -24,7 +24,7 @@ export default function CreateUserScreen() {
     try {
       // Send the username and password to your Flask API
       const result = await axios.post<CreateUserResponse>(
-        "http://10.40.125.220:5000/login",
+        "http://10.40.144.249:5000/login",
         { username, password }
       );
       

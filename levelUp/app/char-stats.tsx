@@ -3,17 +3,20 @@ import Blitz from '../assets/images/blitz.png'
 import Background from '../assets/images/battle_background.png' //https://opengameart.org/content/green-meadow-pixel-art-background
 import Sword from '../assets/images/sword.png'  //https://www.pngwing.com/en/search?q=pixel+Art+Sword
 import Heart from '../assets/images/heart.png'  //https://www.cleanpng.com/png-tenor-gfycat-giphy-computer-keyboard-8-bit-825586/
-import { useNavigation } from '@react-navigation/native'; // Import the navigation hook
+import { useNavigation , useRoute} from '@react-navigation/native'; // Import the navigation hook
 import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Image } from 'react-native';
 
 const StatsScreen: React.FC = () => {
 
     const navigation = useNavigation(); 
 
+    const route = useRoute();
     const [skillPoints, setSkillPoints] = useState(10); // Max skill points
     const [hp, setHp] = useState(0); // Start at 0, max 5
     const [attack, setAttack] = useState(0); // Start at 0, max 5
     const [locked, setLocked] = useState(false); // Lock stats on battle
+    const params = route.params as {level?:number} ||{};
+    const levelcopy = params.level
 
     // Function to allocate points
     const increaseStat = (stat: 'hp' | 'attack') => {
@@ -52,7 +55,7 @@ const StatsScreen: React.FC = () => {
         >
             {/* Top-middle corner: Lvl*/}
             <View style={styles.topLeftCorner}>
-                <Text style={styles.levelText}>LVL 1</Text>
+                <Text style={styles.levelText}>LVL: {levelcopy}</Text>
             </View>
 
             {/* Top-middle corner: XP */}

@@ -40,11 +40,11 @@ app.config['JWT_SECRET_KEY'] = 'c52aaf94e3221359641f0f0b82b80d0f214945ffa85264e0
 # Load your trained model (make sure your model is saved as 'model.h5' or update accordingly)
 
 #Mac specific trained model
-#model = tf.keras.models.load_model(r'trained_model.h5')
+model = tf.keras.models.load_model('trained_model.h5')
 
-import h5py
-with h5py.File('trained_model.h5', 'r') as f:
-    print(f.keys())
+# import h5py
+# with h5py.File('trained_model.h5', 'r') as f:
+#     print(f.keys())
 
 def preprocess_image(image):
     """
@@ -249,4 +249,4 @@ def update_level():
 
 
 if __name__ == "__main__":
-    app.run(host="10.40.106.51", port=5000, debug=True)
+    app.run(host="10.40.144.249", port=5000, debug=True)

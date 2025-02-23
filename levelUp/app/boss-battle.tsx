@@ -155,7 +155,7 @@ const BossBattleScreen: React.FC = () => {
             {showHomeButton && (
                 <TouchableOpacity 
                     style={styles.homeButton} 
-                    onPress={() => navigation.navigate('battle')}
+                    onPress={() => navigation.navigate('(tabs)')}
                 >
                     <Text style={styles.homeButtonText}>Back to Home</Text>
                 </TouchableOpacity>

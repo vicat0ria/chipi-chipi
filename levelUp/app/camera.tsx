@@ -56,7 +56,7 @@ export default function App() {
     formData.append("expected_result", expectedResult);
     
     try {
-      const response = await fetch("http://10.40.106.51:5000/predict", {
+      const response = await fetch("http://10.40.144.249:5000/predict", {
         method: "POST",
         body: formData,
       });

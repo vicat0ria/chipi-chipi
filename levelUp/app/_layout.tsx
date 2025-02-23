@@ -31,13 +31,13 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
-        <Stack.Screen name="index" options={{ title: 'Login Screen', headerShown: false }} />
+        <Stack.Screen name="index" options={{ title: 'Login', headerShown: false }} />
         {/* Main Tab Navigation */}
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         
-        <Stack.Screen name="camera" options={{ title: 'Temp Screen', headerShown: true}} />
-        <Stack.Screen name="play" options={{ title: 'Play Screen', headerShown: true }} />
-        <Stack.Screen name="tasks" options={{ title: 'Task Screen', headerShown: true }} />
+        <Stack.Screen name="camera" options={{ title: 'Camera', headerShown: true}} />
+        <Stack.Screen name="play" options={{ title: 'Play', headerShown: true }} />
+        <Stack.Screen name="tasks" options={{ title: 'Tasks', headerShown: true }} />
         {/* Handle "not found" route */}
         <Stack.Screen name="+not-found" />
       </Stack>
