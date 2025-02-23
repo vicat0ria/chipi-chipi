@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@react-native-community/push-notification-ios": "^1.11.0",
+    "expo-notifications": "~0.29.13",
+    "expo-permissions": "^14.4.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "@types/react": "~18.3.12"
+  }
+}
