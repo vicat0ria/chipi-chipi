@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 import pickle
-from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 from pymongo import MongoClient
 import bcrypt
 
@@ -55,8 +55,8 @@ def create_user():
     password = data.get("password")
     experience_points = 0
     level = 0
-    power = 1
-    health = 10
+    power = 0
+    health = 0
     dexterity = 0
 
 
@@ -104,39 +104,43 @@ def get_user():
 
     if user and verify_password(inputted_password,correct_password):
         # If user is found, return the user object (with _id serialized)
-        return jsonify(serialize_user(user)), 200
+        access_token = create_access_token(identity=username)  # Generate JWT token
+        return jsonify({"token": access_token}), 200
     else:
         # If user is not found, return a 404 response
         return jsonify({"error": "User not found"}), 404
 
 
 @app.route("/save_boss", methods=["POST"])
-@jwt_required()
+#@jwt_required()
 def save_boss():
-    user_id = get_jwt_identity()
-    users = mongo.db.users
-    bosses = mongo.db.bosses
-    boss_name = request.get_json().get("Name")
+    users = db["users"]
+    bosses = db["bosses"]
+    data = request.get_json()
+    boss_name = data.get("Name")
+    username = data.get("username")
 
-    # Find user and item
-    user = users.find_one({"_id": ObjectId(user_id)})
-    boss = bosses.find_one({"Name": ObjectId(boss_name)})
-    boss_id = boss.get("_id")
+
+    # Find user and boss
+    user = users.find_one({"username": username})
+    boss = bosses.find_one({"Name": boss_name})  # No need to convert boss_name to ObjectId
 
     if not user:
         return jsonify({"message": "User not found"}), 404
 
     if not boss:
-        return jsonify({"message": "Item not found"}), 404
+        return jsonify({"message": "Boss not found"}), 404  # Changed the message here
+
+    boss_id = boss.get("_id")
 
     # Avoid duplicates
     if str(boss_id) in user.get("defeated_bosses", []):
-        return jsonify({"message": "Item already saved"}), 400
+        return jsonify({"message": "Boss already saved"}), 400  # Changed the message here
 
-    # Save item
-    users.update_one({"_id": ObjectId(user_id)}, {"$push": {"defeated_bosses": str(boss["_id"])}})
+    # Save boss to user's defeated_bosses list
+    users.update_one({"username": username}, {"$push": {"defeated_bosses": boss}})
 
-    return jsonify({"message": "Item saved successfully"})
+    return jsonify({"message": "Boss saved successfully"})
 
 
 
