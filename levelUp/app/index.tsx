@@ -1,90 +1,85 @@
-import React, { useState } from 'react';
-import logo from '../assets/images/LU-Logo.png';
+import React, { useState } from "react";
+import { View, TextInput, Button, Text, StyleSheet, Image} from "react-native";
 import { useNavigation } from '@react-navigation/native'; // Import the navigation hook
-import {
-  StyleSheet,
-  SafeAreaView,
-  Button,
-  View,
-  Image,
-  Text,
-  TouchableOpacity,
-  TextInput,
-} from 'react-native';
+import logo from '../assets/images/LU-Logo.png';
+import { TouchableOpacity } from 'react-native';
+import axios from "axios";
 
-interface FormState {
-  email: string;
-  password: string;
-}
+type CreateUserResponse = {
+  message: string;
+  error?: string;
+};
 
-const Example: React.FC = () => {
-  const [form, setForm] = useState<FormState>({
-    email: '',
-    password: '',
-  });
+export default function CreateUserScreen() {
 
-  const navigation = useNavigation(); // Get the navigation object
+  const navigation = useNavigation();
+
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [response, setResponse] = useState<string>("");
+
+  const handleSubmit = async () => {
+    try {
+      // Send the username and password to your Flask API
+      const result = await axios.post<CreateUserResponse>(
+        "http://10.40.125.220:5000/create_user",
+        { username, password }
+      );
+      
+      // Display response message from API
+      if (result.data.error) {
+        setResponse(result.data.error);
+      } else {
+        setResponse(result.data.message);
+        navigation.navigate('(tabs)');
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setResponse("Error fetching response");
+    }
+  };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#e8ecf4' }}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Image
+    <View style={styles.container}>
+      <View style={styles.header}>
+      <Image
             alt="App Logo"
             resizeMode="contain"
             style={styles.headerImg}
             source={logo}
           />
-
-          <Text style={styles.title}>
-            Sign in to <Text style={{ color: '#3DA35D' }}>Level Up!</Text>
-          </Text>
-
-          <Text style={styles.subtitle}>
-            Can you defeat today's boss?
-          </Text>
-        </View>
-
-        <View style={styles.form}>
-          <View style={styles.input}>
-            <Text style={styles.inputLabel}>Email address</Text>
-
-            <TextInput
-              autoCapitalize="none"
-              autoCorrect={false}
-              clearButtonMode="while-editing"
-              keyboardType="email-address"
-              onChangeText={(email) => setForm({ ...form, email })}
-              placeholderTextColor="#6b7280"
-              style={styles.inputControl}
-              value={form.email}
-            />
-          </View>
-
-          <View style={styles.input}>
-            <Text style={styles.inputLabel}>Password</Text>
-
-            <TextInput
-              autoCorrect={false}
-              clearButtonMode="while-editing"
-              onChangeText={(password) => setForm({ ...form, password })}
-              placeholderTextColor="#6b7280"
-              style={styles.inputControl}
-              secureTextEntry={true}
-              value={form.password}
-            />
-          </View>
-        <TouchableOpacity 
-          style={styles.btn} 
-          onPress={() => navigation.navigate('(tabs)')}
-        >
-          <Text style={styles.btnText}>Login</Text>
-        </TouchableOpacity>
-        </View>
+        <Text style={styles.title}>Sign Up to LevelUp!</Text>
+        <Text style={styles.subtitle}>Are you ready to conquer the ASL Bosses?</Text>
       </View>
-    </SafeAreaView>
+
+      <View style={styles.form}>
+        <Text style={styles.inputLabel}>Username</Text>
+        <TextInput
+          style={styles.inputControl}
+          value={username}
+          onChangeText={setUsername}
+        />
+
+        <Text style={styles.inputLabel}>Password</Text>
+        <TextInput
+          style={styles.inputControl}
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+
+      <View style={styles.formAction}>
+          <Text style={styles.responseText}>{response}</Text>
+          
+          <TouchableOpacity style={styles.btn} onPress={handleSubmit}>
+            <Text style={styles.btnText}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.responseText}>Already have an account?</Text>
+      </View>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -92,12 +87,14 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexBasis: 0,
     padding: 24,
+    backgroundColor: '#fff', 
   },
   title: {
     fontSize: 31,
     fontWeight: '700',
-    color: '#1D2A32',
-    marginBottom: 6,
+    color: '#3DA35D', 
+    marginBottom: 20,
+    marginTop: 0,
   },
   subtitle: {
     fontSize: 15,
@@ -109,12 +106,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 36,
   },
-  headerImg: {
-    width: 200,
-    height: 150,
-    alignSelf: 'center',
-    marginBottom: 10,
-  },
   form: {
     flexGrow: 1,
     flexShrink: 1,
@@ -122,17 +113,6 @@ const styles = StyleSheet.create({
   },
   formAction: {
     marginTop: 4,
-    marginBottom: 16,
-  },
-  formFooter: {
-    paddingVertical: 24,
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#222',
-    textAlign: 'center',
-    letterSpacing: 0.15,
-  },
-  input: {
     marginBottom: 16,
   },
   inputLabel: {
@@ -152,6 +132,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#C9D3DB',
     borderStyle: 'solid',
+    marginBottom: 16,
+  },
+  responseText: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#222',
+    textAlign: 'center',
+    marginTop: 5,
+  },
+  headerImg: {
+    width: 200,
+    height: 150,
+    alignSelf: 'center',
+    marginBottom: 10,
   },
   btn: {
     flexDirection: 'row',
@@ -163,6 +157,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: '#3DA35D',
     borderColor: '#3DA35D',
+    marginTop: 10,
   },
   btnText: {
     fontSize: 18,
@@ -171,5 +166,3 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 });
-
-export default Example;

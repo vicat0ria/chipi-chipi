@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, Button, TouchableOpacity} from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Import the navigation hook
 
 const PlayScreen: React.FC = () => {
-  const navigation = useNavigation();
+    const navigation = useNavigation(); // Get the navigation object
 
   const lessons = [
     { letter: 'A', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Sign_language_A.svg/646px-Sign_language_A.svg.png' },
@@ -14,8 +14,8 @@ const PlayScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Text style={styles.lessonTitle}>Lesson 1</Text>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.lessonTitle}>Lesson 1</Text>
         {lessons.map((lesson, index) => (
           <View key={index} style={styles.lessonContainer}>
             <Text style={styles.subtitle}>Letter {lesson.letter}</Text>
@@ -24,14 +24,16 @@ const PlayScreen: React.FC = () => {
               style={styles.image}
               resizeMode="contain"
             />
+
           </View>
+          
         ))}
-        <TouchableOpacity 
-          style={styles.btn} 
-          onPress={() => navigation.navigate('temp')}
-        >
-          <Text style={styles.btnText}>Quiz Yourself!</Text>
-        </TouchableOpacity>
+              <TouchableOpacity 
+              style={styles.btn} 
+              onPress={() => navigation.navigate('temp')}
+            >
+              <Text style={styles.btnText}>Quiz</Text>
+            </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -40,20 +42,21 @@ const PlayScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  scrollContainer: {
-    flexGrow: 1,
+    justifyContent: 'flex-start',
     alignItems: 'center',
+    backgroundColor: '#F5F5F5',
     paddingHorizontal: 20,
-    paddingBottom: 20,
   },
   lessonTitle: {
     fontSize: 32,
     fontWeight: 'bold',
     color: '#3DA35D',
-    marginVertical: 20,
+    marginBottom: 20,
+    marginTop: 20,
     textAlign: 'center',
+  },
+  scrollContainer: {
+    alignItems: 'center',
   },
   lessonContainer: {
     marginBottom: 40,
@@ -71,15 +74,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   btn: {
-    marginTop: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 30,
     paddingVertical: 10,
     paddingHorizontal: 20,
+    borderWidth: 1,
     backgroundColor: '#3DA35D',
-    alignItems: 'center',
+    borderColor: '#3DA35D',
   },
   btnText: {
     fontSize: 18,
+    lineHeight: 26,
     fontWeight: '600',
     color: '#fff',
   },
