@@ -1,14 +1,14 @@
 import React from 'react';
 import Blitz from '../../assets/images/blitz.png';
-import Background from '../../assets/images/battle_background.png';
-import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Image, Vibration } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import Background from '../../assets/images/battle_background.png'; //https://opengameart.org/content/green-meadow-pixel-art-background
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';// Import the navigation hook
 
-const LessonScreen: React.FC = () => {
-    // Function to handle button press with vibration and navigate to SkillPointsScreen
-    const handlePlayPress = () => {
-        Vibration.vibrate(500); // Vibrate for 500ms when Play is pressed
-    };
+
+
+const MenuScreen: React.FC = () => {
+
+    const navigation = useNavigation(); 
 
     return (
         <ImageBackground
@@ -16,9 +16,8 @@ const LessonScreen: React.FC = () => {
             style={styles.background}
             imageStyle={styles.backgroundImage}
         >
-            {/* Top-left: Lvl */}
             <View style={styles.topLeftCorner}>
-                <Text style={styles.levelText}>Lvl 1</Text>
+                <Text style={styles.levelText}>LVL 1</Text>
             </View>
 
             {/* Top-right: XP */}
@@ -29,6 +28,16 @@ const LessonScreen: React.FC = () => {
             {/* Centered: Play Button */}
             <View style={styles.centerContainer}>
                 <TouchableOpacity style={styles.button} onPress={handlePlayPress}>
+
+            {/* Top-middle corner: XP*/}
+                <View style={styles.topRightCorner}>
+                <Text style={styles.xpText}>XP: 0/5</Text>
+            </View>
+
+            {/* Centered: "Play" button */}
+            <View style={styles.centerContainer}>
+                <TouchableOpacity style={styles.button} onPress={() => {navigation.navigate('char-stats')}}>
+
                     <Text style={styles.buttonText}>Play</Text>
                 </TouchableOpacity>
             </View>
@@ -46,10 +55,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     backgroundImage: {
-        width: "100%",
-        height: "100%",
+        width: "150%",
+        height: "150%",
         resizeMode: "cover",
+        marginTop: -350,  // Moves background lower
+        marginLeft: -100,
     },
+    
     topLeftCorner: {
         position: "absolute",
         top: 50,
@@ -84,10 +96,13 @@ const styles = StyleSheet.create({
     centerContainer: {
         justifyContent: "center",
         alignItems: "center",
-        position: "absolute",
-        top: "45%", // Lowered by 100 pixels
-        left: "50%",
-        transform: [{ translateX: -100 }],
+
+
+        position: "absolute", // Required when using `top`
+        bottom: "50%", // Adjust to move it lower
+        left: "40%", // Center it horizontally
+        transform: [{ translateX: -50 }],
+
     },
     button: {
         backgroundColor: "#134611",
@@ -104,13 +119,14 @@ const styles = StyleSheet.create({
     },
     bottomImage: {
         position: "absolute",
-        right: 75,
+        right: 85,
         bottom: 50,
-        width: "80%",
-        height: 250,
+
+        width: "80%", // Adjust width as needed
+        height: 300, // Adjust height as needed
         resizeMode: "contain",
         transform: [{ scaleX: -1 }],
     },
 });
 
-export default LessonScreen;
+export default MenuScreen;
