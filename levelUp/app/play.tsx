@@ -35,8 +35,9 @@ const PlayScreen: React.FC = () => {
 
         <TouchableOpacity 
           style={styles.btn} 
-          onPress={() => navigation.navigate('QuizScreen')}>
-          <Text style={styles.btnText}>Take the Quiz!</Text>
+          onPress={() => navigation.navigate('quiz')}
+        >
+          <Text style={styles.btnText}>Quiz</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
