@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+ import React, { useState } from "react";
 import { View, TextInput, Button, Text, StyleSheet } from "react-native";
 import axios from "axios";
 
@@ -14,7 +14,7 @@ export default function MLScreen() {
     try {
       // Send the text input to your Flask API
       const result = await axios.post<PredictionResponse>(
-        "http://10.40.106.51:5000/predict",
+        "http://10.40.144.249:5000/predict",
         { text }
       );
       
