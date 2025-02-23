@@ -68,7 +68,7 @@ const HomeScreen: React.FC = () => {
           American Sign Language  ▼
         </Animated.Text>
 
-        <Text style={styles.subtitle}>Level 1</Text>
+        <Text style={styles.subtitle}>Lesson 1</Text>
 
         {/* Animated Learn Button */}
         <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
