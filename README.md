@@ -7,19 +7,19 @@
 
 **App Type:** Cross-platform mobile app 
 
-## Technologies Used  
+## Researh  
 
-### EndeavorOTC (https://www.endeavorotc.com/blog/adult-learning-techniques-when-you-have-adhd/)
+### [EndeavorOTC](https://www.endeavorotc.com/blog/adult-learning-techniques-when-you-have-adhd/)
 - Use Visual Aids: i.e. diagrams to retain info more effectively
 - Hands-On Learning: Tasks using senses/physical engagement
 - Take Active Breaks: When getting restless, reset to stay focused
 - Reward Yourself for Completing Tasks: Helps stay motivated 
 and on track by regulating dopamine levels
 
-### ADDA (https://add.org/understimulated-adhd/)
+### [ADDA](https://add.org/understimulated-adhd/)
 - Introduce Novelty Into Your Routine: “Switching your routine can improve focus and productivity”
 
-### ADHDNeuro (https://adhdneuro.com/blog/what-is-the-adhd-color)
+### [ADHDNeuro](https://adhdneuro.com/blog/what-is-the-adhd-color)
 - Blue: calming effects — for relaxation and concentration
 - Green: harmony/balance — efficiency, less strain for tasks 
 - Yellow: uplifting — stimulates mental activity 
@@ -31,21 +31,21 @@ and on track by regulating dopamine levels
 React Native, Expo, Typescript, WithFrame UI Kit, Pixilart 
 
 ### Backend  
-- Database: Flask, MongoDB Atlas
-- Machine Learning: Flask, Python, Tensorflow, CNN Model, scikit-learn, NumPy, pandas, ASL Dataset (Kaggle: https://www.kaggle.com/datasets/grassknoted/asl-alphabet)  
+- **Database**: Flask, MongoDB Atlas
+- **Machine Learning**: Flask, Python, Tensorflow, CNN Model, scikit-learn, NumPy, pandas, ASL Dataset (Kaggle: https://www.kaggle.com/datasets/grassknoted/asl-alphabet)  
 
 ### More Tools:
-- OS level a11y APIs: Text-to-Speech/Voiceover, WAVE
+- **OS level a11y APIs**: Text-to-Speech/Voiceover, WAVE
 
 ## Installation & Setup  
 
 ### Prerequisites  
-- Install **npm** on your machine: https://nodejs.org/en/download  
-- Install latest version of Python
+- Install [**npm**](https://nodejs.org/en/download) on your machine. 
+- Install latest version of [**Python**](https://www.python.org/downloads/).
 
 ### Steps to Install & Run  
 
-## Frontend
+#### Frontend
 1. Clone the GitHub repository:  
    ```sh
    git clone https://github.com/{username}/chipi-chipi.git
@@ -71,7 +71,7 @@ React Native, Expo, Typescript, WithFrame UI Kit, Pixilart
     npx expo start --tunnel
     ```
 
-## Backend
+#### Backend
 
 1. Install necessary dependencies:
    ```sh
@@ -85,14 +85,14 @@ React Native, Expo, Typescript, WithFrame UI Kit, Pixilart
     pip install tensorflow
     ```
 
-2. Start the backend by executing:
-  ```sh
-  python app.py
-  ```
+1. Start the backend by executing:
+   ```sh
+    python app.py
+    ```
 
-### Acknowledgements
+## Acknowledgements
 
-## Student Developers:
+### Student Developers:
 - Victoria Miteva: Team Captain, Frontend, Documentation
 - Alberto Rubalcava: Frontend, UI/UX Design, Researcher
 - Alberto Sandoval: Backend, Databases, Game Designer
@@ -101,10 +101,10 @@ React Native, Expo, Typescript, WithFrame UI Kit, Pixilart
 - Hayk Mirzakhanyan: Game Designer, Artist, Haptics
 - Vaishnavi Sen: Backend, Machine Learning, Frontend
 
-## Organization:
-California State University, Northridge
-College of Engineering and Computer Science
+### Organization:
+- California State University, Northridge
+- College of Engineering and Computer Science
 
-## Competition:
+### Competition:
 2025 SS12 Code for a Cause Accessibility Hackathon
 
